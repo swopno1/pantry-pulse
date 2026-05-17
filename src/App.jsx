@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { UtensilsCrossed, Settings as SettingsIcon, Info, ChefHat, Sparkles } from 'lucide-react';
+import { UtensilsCrossed, Settings as SettingsIcon, ChefHat, Sparkles } from 'lucide-react';
 import SettingsModal from './components/SettingsModal';
+import IngredientInput from './components/IngredientInput';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [ingredients, setIngredients] = useState([]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -25,29 +27,28 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow container mx-auto px-4 py-12 flex flex-col items-center justify-center text-center">
-        <div className="max-w-2xl">
+      <main className="flex-grow container mx-auto px-4 py-12 flex flex-col items-center">
+        <div className="max-w-2xl w-full text-center">
           <div className="inline-flex p-3 bg-amber/10 text-amber rounded-2xl mb-6">
             <Sparkles size={40} />
           </div>
           <h2 className="text-4xl md:text-5xl mb-6 text-charcoal leading-tight">
-            Welcome to <span className="text-sage">PantryPulse</span>
+            What's in your <span className="text-sage">pantry?</span>
           </h2>
           <p className="text-lg text-charcoal/70 mb-10 font-sans">
-            Transform your leftover ingredients into delicious recipes.
-            Completely private, ultra-fast, and powered by your own AI keys.
+            Enter the ingredients you have on hand, and we'll suggest the perfect recipe.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-sage hover:bg-sage/90 text-white px-8 py-3 rounded-lg font-semibold transition-all shadow-lg flex items-center justify-center gap-2">
-              <UtensilsCrossed size={20} />
-              Start Cooking
-            </button>
-            <button className="bg-white border-2 border-amber/20 hover:border-amber text-amber px-8 py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2">
-              <Info size={20} />
-              Learn More
-            </button>
-          </div>
+          <IngredientInput ingredients={ingredients} setIngredients={setIngredients} />
+
+          {ingredients.length > 0 && (
+            <div className="mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <button className="bg-sage hover:bg-sage/90 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-2 mx-auto group">
+                <UtensilsCrossed size={24} className="group-hover:rotate-12 transition-transform" />
+                Generate Recipe
+              </button>
+            </div>
+          )}
         </div>
       </main>
 
