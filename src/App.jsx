@@ -2,10 +2,16 @@ import { useState } from 'react';
 import { UtensilsCrossed, Settings as SettingsIcon, ChefHat, Sparkles } from 'lucide-react';
 import SettingsModal from './components/SettingsModal';
 import IngredientInput from './components/IngredientInput';
+import RecipePreferences from './components/RecipePreferences';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [ingredients, setIngredients] = useState([]);
+  const [preferences, setPreferences] = useState({
+    cuisine: 'Any / Fusion',
+    style: 'Quick & Easy (< 20 mins)',
+    spice: 'Medium'
+  });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -42,12 +48,18 @@ function App() {
           <IngredientInput ingredients={ingredients} setIngredients={setIngredients} />
 
           {ingredients.length > 0 && (
-            <div className="mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <button className="bg-sage hover:bg-sage/90 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-2 mx-auto group">
-                <UtensilsCrossed size={24} className="group-hover:rotate-12 transition-transform" />
-                Generate Recipe
-              </button>
-            </div>
+            <>
+              <RecipePreferences
+                preferences={preferences}
+                onPreferenceChange={setPreferences}
+              />
+              <div className="mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <button className="bg-sage hover:bg-sage/90 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-2 mx-auto group">
+                  <UtensilsCrossed size={24} className="group-hover:rotate-12 transition-transform" />
+                  Generate Recipe
+                </button>
+              </div>
+            </>
           )}
         </div>
       </main>
