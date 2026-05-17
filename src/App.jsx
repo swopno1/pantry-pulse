@@ -4,6 +4,7 @@ import Header from './components/Header';
 import SettingsModal from './components/SettingsModal';
 import IngredientInput from './components/IngredientInput';
 import RecipePreferences from './components/RecipePreferences';
+import { generateRecipePrompt } from './utils/promptBuilder';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -20,8 +21,8 @@ function App() {
     geminiKey: localStorage.getItem('pantry_pulse_gemini_key') || '',
   });
 
-  const [isLoading] = useState(false);
-  const [generatedRecipe] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [generatedRecipe, setGeneratedRecipe] = useState('');
 
   const hasApiKey = !!(apiConfig.openaiKey || apiConfig.geminiKey);
 
@@ -35,6 +36,32 @@ function App() {
     localStorage.removeItem('pantry_pulse_openai_key');
     localStorage.removeItem('pantry_pulse_gemini_key');
     setApiConfig({ openaiKey: '', geminiKey: '' });
+  };
+
+  const handleGenerate = () => {
+    setIsLoading(true);
+
+    // Phase 6: Build the prompt
+    const prompt = generateRecipePrompt(ingredients, preferences);
+
+    // For now, we just log it as per Phase 6 requirements
+    console.log("Generated Prompt for AI:");
+    console.log(prompt);
+
+    // Mocking the completion for now
+    setTimeout(() => {
+      setIsLoading(false);
+      setGeneratedRecipe(`# Mock Recipe Title
+## Quick Overview (Prep Time: 5 mins, Cook Time: 10 mins, Serving Size: 1)
+## Ingredients Needed
+- ${ingredients.join(', ')}
+- Basic kitchen staples (salt, oil, water, pepper)
+## Step-by-Step Instructions
+1. This is a mock step for the generated prompt.
+2. The actual API integration comes in the next phase.
+## Chef's Zero-Waste Tip
+Enjoy your meal and don't waste the scraps!`);
+    }, 1000);
   };
 
   return (
@@ -72,6 +99,7 @@ function App() {
               <div className="pt-4">
                 <div className="relative group">
                   <button
+                    onClick={handleGenerate}
                     disabled={ingredients.length === 0 || !hasApiKey || isLoading}
                     className="w-full bg-sage hover:bg-sage/90 disabled:bg-charcoal/10 disabled:text-charcoal/30 text-white py-4 px-8 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-sage/20 flex items-center justify-center gap-3 group/btn cursor-pointer disabled:cursor-not-allowed"
                   >
