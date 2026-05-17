@@ -1,4 +1,4 @@
-import { Flame } from 'lucide-react';
+import { Flame, Globe, Clock } from 'lucide-react';
 
 const RecipePreferences = ({ preferences, onPreferenceChange }) => {
   const cuisines = [
@@ -31,13 +31,17 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
     <div className="w-full max-w-2xl mx-auto mt-8 space-y-8 text-left animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Cuisine Type */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-charcoal/80 ml-1">Cuisine Type</h3>
+        <h3 className="text-lg font-semibold text-charcoal/80 ml-1 flex items-center gap-2">
+          <Globe size={20} className="text-sage" />
+          Cuisine Type
+        </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {cuisines.map((cuisine) => (
             <button
               key={cuisine}
               onClick={() => handleCuisineChange(cuisine)}
               aria-pressed={preferences.cuisine === cuisine}
+              aria-label={`Select ${cuisine} cuisine`}
               className={`px-4 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
                 preferences.cuisine === cuisine
                   ? 'bg-amber border-amber text-white shadow-md shadow-amber/20'
@@ -52,13 +56,17 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
 
       {/* Cooking Style */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-charcoal/80 ml-1">Cooking Style & Time</h3>
+        <h3 className="text-lg font-semibold text-charcoal/80 ml-1 flex items-center gap-2">
+          <Clock size={20} className="text-sage" />
+          Cooking Style & Time
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {styles.map((style) => (
             <button
               key={style}
               onClick={() => handleStyleChange(style)}
               aria-pressed={preferences.style === style}
+              aria-label={`Select ${style} cooking style`}
               className={`px-4 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
                 preferences.style === style
                   ? 'bg-amber border-amber text-white shadow-md shadow-amber/20'
@@ -74,6 +82,7 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
       {/* Spice Level */}
       <div className="space-y-3">
         <h3 className="text-lg font-semibold text-charcoal/80 ml-1 flex items-center gap-2">
+          <Flame size={20} className="text-sage" />
           Spice Level
         </h3>
         <div className="flex gap-3">
@@ -82,6 +91,7 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
               key={level}
               onClick={() => handleSpiceChange(level)}
               aria-pressed={preferences.spice === level}
+              aria-label={`Select ${level} spice level`}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all font-medium ${
                 preferences.spice === level
                   ? 'bg-amber border-amber text-white shadow-md shadow-amber/20'
