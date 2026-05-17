@@ -1,24 +1,22 @@
 import { useState } from 'react';
 import { X, Eye, EyeOff, Trash2, ShieldCheck, Save } from 'lucide-react';
 
-const SettingsModal = ({ onClose }) => {
-  const [openAIKey, setOpenAIKey] = useState(() => localStorage.getItem('pantry_pulse_openai_key') || '');
-  const [geminiKey, setGeminiKey] = useState(() => localStorage.getItem('pantry_pulse_gemini_key') || '');
+const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
+  const [openAIKey, setOpenAIKey] = useState(apiConfig.openaiKey);
+  const [geminiKey, setGeminiKey] = useState(apiConfig.geminiKey);
   const [showOpenAI, setShowOpenAI] = useState(false);
   const [showGemini, setShowGemini] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleSave = () => {
-    localStorage.setItem('pantry_pulse_openai_key', openAIKey);
-    localStorage.setItem('pantry_pulse_gemini_key', geminiKey);
+    onSave({ openaiKey: openAIKey, geminiKey: geminiKey });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
   };
 
   const handleClear = () => {
     if (window.confirm('Are you sure you want to clear all saved API keys?')) {
-      localStorage.removeItem('pantry_pulse_openai_key');
-      localStorage.removeItem('pantry_pulse_gemini_key');
+      onClear();
       setOpenAIKey('');
       setGeminiKey('');
     }
