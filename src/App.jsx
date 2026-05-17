@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { UtensilsCrossed, Settings as SettingsIcon, ChefHat, Sparkles } from 'lucide-react';
+import { Sparkles, Wand2 } from 'lucide-react';
+import Header from './components/Header';
 import SettingsModal from './components/SettingsModal';
 import IngredientInput from './components/IngredientInput';
 import RecipePreferences from './components/RecipePreferences';
@@ -13,67 +14,124 @@ function App() {
     spice: 'Medium'
   });
 
+  // Centralized API Configuration
+  const [apiConfig, setApiConfig] = useState({
+    openaiKey: localStorage.getItem('pantry_pulse_openai_key') || '',
+    geminiKey: localStorage.getItem('pantry_pulse_gemini_key') || '',
+  });
+
+  const [isLoading] = useState(false);
+  const [generatedRecipe] = useState('');
+
+  const hasApiKey = !!(apiConfig.openaiKey || apiConfig.geminiKey);
+
+  const handleSaveSettings = (newConfig) => {
+    localStorage.setItem('pantry_pulse_openai_key', newConfig.openaiKey);
+    localStorage.setItem('pantry_pulse_gemini_key', newConfig.geminiKey);
+    setApiConfig(newConfig);
+  };
+
+  const handleClearSettings = () => {
+    localStorage.removeItem('pantry_pulse_openai_key');
+    localStorage.removeItem('pantry_pulse_gemini_key');
+    setApiConfig({ openaiKey: '', geminiKey: '' });
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="bg-sage text-white p-4 shadow-md">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <ChefHat size={32} />
-            <h1 className="text-2xl font-serif tracking-tight">PantryPulse</h1>
-          </div>
-          <button
-            onClick={() => setIsSettingsOpen(true)}
-            className="p-2 hover:bg-white/10 rounded-full transition-colors"
-            aria-label="Open Settings"
-          >
-            <SettingsIcon size={24} />
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col bg-cream/30">
+      <Header
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        hasApiKey={hasApiKey}
+      />
 
-      {/* Main Content */}
-      <main className="flex-grow container mx-auto px-4 py-12 flex flex-col items-center">
-        <div className="max-w-2xl w-full text-center">
-          <div className="inline-flex p-3 bg-amber/10 text-amber rounded-2xl mb-6">
-            <Sparkles size={40} />
-          </div>
-          <h2 className="text-4xl md:text-5xl mb-6 text-charcoal leading-tight">
-            What's in your <span className="text-sage">pantry?</span>
-          </h2>
-          <p className="text-lg text-charcoal/70 mb-10 font-sans">
-            Enter the ingredients you have on hand, and we'll suggest the perfect recipe.
-          </p>
+      <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-8 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
-          <IngredientInput ingredients={ingredients} setIngredients={setIngredients} />
+          {/* Left Column: Input Control Zone */}
+          <section className="space-y-10">
+            <div className="space-y-4">
+              <h2 className="text-3xl md:text-4xl text-charcoal leading-tight">
+                What's in your <span className="text-sage font-serif italic">pantry?</span>
+              </h2>
+              <p className="text-charcoal/60 text-lg max-w-md">
+                Add your ingredients and set your preferences to generate a custom AI recipe.
+              </p>
+            </div>
 
-          {ingredients.length > 0 && (
-            <>
-              <RecipePreferences
-                preferences={preferences}
-                onPreferenceChange={setPreferences}
-              />
-              <div className="mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <button className="bg-sage hover:bg-sage/90 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-2 mx-auto group">
-                  <UtensilsCrossed size={24} className="group-hover:rotate-12 transition-transform" />
-                  Generate Recipe
-                </button>
+            <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-charcoal/5">
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-charcoal/40 ml-1">Ingredients</h3>
+                <IngredientInput ingredients={ingredients} setIngredients={setIngredients} />
               </div>
-            </>
-          )}
+
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-charcoal/40 ml-1">Preferences</h3>
+                <RecipePreferences preferences={preferences} onPreferenceChange={setPreferences} />
+              </div>
+
+              <div className="pt-4">
+                <div className="relative group">
+                  <button
+                    disabled={ingredients.length === 0 || !hasApiKey || isLoading}
+                    className="w-full bg-sage hover:bg-sage/90 disabled:bg-charcoal/10 disabled:text-charcoal/30 text-white py-4 px-8 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-sage/20 flex items-center justify-center gap-3 group/btn cursor-pointer disabled:cursor-not-allowed"
+                  >
+                    < Wand2 size={24} className="group-hover/btn:rotate-12 transition-transform" />
+                    {isLoading ? 'Crafting Recipe...' : 'Generate Recipe'}
+                  </button>
+
+                  {(ingredients.length === 0 || !hasApiKey) && !isLoading && (
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-charcoal text-white text-xs py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-10">
+                      {ingredients.length === 0 ? 'Add at least one ingredient' : 'Set your API key in Settings'}
+                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-charcoal rotate-45" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Right Column: Recipe Output Zone */}
+          <section className="lg:sticky lg:top-28">
+             <div className="bg-white rounded-3xl shadow-sm border border-charcoal/5 min-h-[500px] flex flex-col overflow-hidden transition-all">
+                {!generatedRecipe ? (
+                  <div className="flex-grow flex flex-col items-center justify-center p-12 text-center space-y-6">
+                    <div className="w-20 h-20 bg-cream rounded-full flex items-center justify-center text-charcoal/10">
+                      <Sparkles size={40} />
+                    </div>
+                    <div className="space-y-2 max-w-xs mx-auto">
+                      <h3 className="text-xl font-bold text-charcoal/80">Ready to Cook?</h3>
+                      <p className="text-charcoal/40 leading-relaxed">
+                        Your custom recipe will appear here once you hit generate.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                   <div className="p-8 animate-in fade-in duration-700">
+                      <div className="prose prose-sage max-w-none">
+                        <pre className="whitespace-pre-wrap font-sans text-charcoal/80 leading-relaxed text-lg">
+                          {generatedRecipe}
+                        </pre>
+                      </div>
+                   </div>
+                )}
+             </div>
+          </section>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="py-6 border-t border-charcoal/5">
-        <div className="container mx-auto px-4 text-center text-sm text-charcoal/50">
-          <p>&copy; {new Date().getFullYear()} PantryPulse. Your ingredients, your privacy, your AI.</p>
+      <footer className="py-8 border-t border-charcoal/5 bg-white">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-charcoal/40 text-sm">
+            &copy; {new Date().getFullYear()} PantryPulse. Your ingredients, your privacy, your AI.
+          </p>
         </div>
       </footer>
 
-      {/* Settings Modal */}
       {isSettingsOpen && (
         <SettingsModal
+          apiConfig={apiConfig}
+          onSave={handleSaveSettings}
+          onClear={handleClearSettings}
           onClose={() => setIsSettingsOpen(false)}
         />
       )}
