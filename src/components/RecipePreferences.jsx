@@ -1,4 +1,4 @@
-import { Flame } from 'lucide-react';
+import { Flame, Globe, Clock } from 'lucide-react';
 
 const RecipePreferences = ({ preferences, onPreferenceChange }) => {
   const cuisines = [
@@ -31,7 +31,7 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
     <div className="w-full max-w-2xl mx-auto mt-8 space-y-8 text-left animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Cuisine Type */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-charcoal/80 ml-1">Cuisine Type</h3>
+        <h3 className="text-lg font-semibold text-charcoal/80 ml-1 flex items-center gap-2"><Globe size={20} />Cuisine Type</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {cuisines.map((cuisine) => (
             <button
@@ -52,7 +52,7 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
 
       {/* Cooking Style */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-charcoal/80 ml-1">Cooking Style & Time</h3>
+        <h3 className="text-lg font-semibold text-charcoal/80 ml-1 flex items-center gap-2"><Clock size={20} />Cooking Style & Time</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {styles.map((style) => (
             <button
@@ -73,7 +73,7 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
 
       {/* Spice Level */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-charcoal/80 ml-1 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-charcoal/80 ml-1 flex items-center gap-2"><Flame size={20} />
           Spice Level
         </h3>
         <div className="flex gap-3">
@@ -93,7 +93,7 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
                   <Flame
                     key={i}
                     size={16}
-                    className={preferences.spice === level ? 'fill-white' : 'fill-amber'}
+                    className={preferences.spice === level ? 'fill-white text-white' : 'text-charcoal/20'}
                   />
                 ))}
               </div>

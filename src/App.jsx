@@ -7,6 +7,11 @@ import RecipePreferences from './components/RecipePreferences';
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [ingredients, setIngredients] = useState([]);
+  const handleGenerateRecipe = () => {
+    console.log("Generating recipe with:", { ingredients, preferences });
+    alert(`Generating a ${preferences.spice} ${preferences.cuisine} recipe for you!`);
+  };
+
   const [preferences, setPreferences] = useState({
     cuisine: 'Any / Fusion',
     style: 'Quick & Easy (< 20 mins)',
@@ -54,7 +59,7 @@ function App() {
                 onPreferenceChange={setPreferences}
               />
               <div className="mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <button className="bg-sage hover:bg-sage/90 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-2 mx-auto group">
+                <button onClick={handleGenerateRecipe} className="bg-sage hover:bg-sage/90 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-2 mx-auto group">
                   <UtensilsCrossed size={24} className="group-hover:rotate-12 transition-transform" />
                   Generate Recipe
                 </button>
