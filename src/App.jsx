@@ -1,6 +1,10 @@
-import { UtensilsCrossed, Settings, Info, ChefHat, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { UtensilsCrossed, Settings as SettingsIcon, Info, ChefHat, Sparkles } from 'lucide-react';
+import SettingsModal from './components/SettingsModal';
 
 function App() {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -10,8 +14,12 @@ function App() {
             <ChefHat size={32} />
             <h1 className="text-2xl font-serif tracking-tight">PantryPulse</h1>
           </div>
-          <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
-            <Settings size={24} />
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            className="p-2 hover:bg-white/10 rounded-full transition-colors"
+            aria-label="Open Settings"
+          >
+            <SettingsIcon size={24} />
           </button>
         </div>
       </header>
@@ -49,6 +57,13 @@ function App() {
           <p>&copy; {new Date().getFullYear()} PantryPulse. Your ingredients, your privacy, your AI.</p>
         </div>
       </footer>
+
+      {/* Settings Modal */}
+      {isSettingsOpen && (
+        <SettingsModal
+          onClose={() => setIsSettingsOpen(false)}
+        />
+      )}
     </div>
   );
 }
