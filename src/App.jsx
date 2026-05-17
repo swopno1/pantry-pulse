@@ -5,6 +5,7 @@ import SettingsModal from './components/SettingsModal';
 import IngredientInput from './components/IngredientInput';
 import RecipePreferences from './components/RecipePreferences';
 import { generateRecipePrompt } from './utils/promptBuilder';
+import { generateRecipeFromAI } from './utils/apiService';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -19,6 +20,7 @@ function App() {
   const [apiConfig, setApiConfig] = useState({
     openaiKey: localStorage.getItem('pantry_pulse_openai_key') || '',
     geminiKey: localStorage.getItem('pantry_pulse_gemini_key') || '',
+    activeProvider: localStorage.getItem('pantry_pulse_active_provider') || 'openai',
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -29,39 +31,35 @@ function App() {
   const handleSaveSettings = (newConfig) => {
     localStorage.setItem('pantry_pulse_openai_key', newConfig.openaiKey);
     localStorage.setItem('pantry_pulse_gemini_key', newConfig.geminiKey);
+    localStorage.setItem('pantry_pulse_active_provider', newConfig.activeProvider);
     setApiConfig(newConfig);
   };
 
   const handleClearSettings = () => {
     localStorage.removeItem('pantry_pulse_openai_key');
     localStorage.removeItem('pantry_pulse_gemini_key');
-    setApiConfig({ openaiKey: '', geminiKey: '' });
+    localStorage.removeItem('pantry_pulse_active_provider');
+    setApiConfig({ openaiKey: '', geminiKey: '', activeProvider: 'openai' });
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setIsLoading(true);
+    setGeneratedRecipe('');
 
-    // Phase 6: Build the prompt
-    const prompt = generateRecipePrompt(ingredients, preferences);
+    try {
+      // Build the prompt
+      const prompt = generateRecipePrompt(ingredients, preferences);
 
-    // For now, we just log it as per Phase 6 requirements
-    console.log("Generated Prompt for AI:");
-    console.log(prompt);
+      // Call the AI Provider
+      const recipe = await generateRecipeFromAI(apiConfig, prompt);
 
-    // Mocking the completion for now
-    setTimeout(() => {
+      setGeneratedRecipe(recipe);
+    } catch (error) {
+      console.error('Error generating recipe:', error);
+      alert(error.message || 'Something went wrong while generating the recipe. Please try again.');
+    } finally {
       setIsLoading(false);
-      setGeneratedRecipe(`# Mock Recipe Title
-## Quick Overview (Prep Time: 5 mins, Cook Time: 10 mins, Serving Size: 1)
-## Ingredients Needed
-- ${ingredients.join(', ')}
-- Basic kitchen staples (salt, oil, water, pepper)
-## Step-by-Step Instructions
-1. This is a mock step for the generated prompt.
-2. The actual API integration comes in the next phase.
-## Chef's Zero-Waste Tip
-Enjoy your meal and don't waste the scraps!`);
-    }, 1000);
+    }
   };
 
   return (
@@ -121,7 +119,7 @@ Enjoy your meal and don't waste the scraps!`);
           {/* Right Column: Recipe Output Zone */}
           <section className="lg:sticky lg:top-28">
              <div className="bg-white rounded-3xl shadow-sm border border-charcoal/5 min-h-[500px] flex flex-col overflow-hidden transition-all">
-                {!generatedRecipe ? (
+                {!generatedRecipe && !isLoading ? (
                   <div className="flex-grow flex flex-col items-center justify-center p-12 text-center space-y-6">
                     <div className="w-20 h-20 bg-cream rounded-full flex items-center justify-center text-charcoal/10">
                       <Sparkles size={40} />
@@ -130,6 +128,18 @@ Enjoy your meal and don't waste the scraps!`);
                       <h3 className="text-xl font-bold text-charcoal/80">Ready to Cook?</h3>
                       <p className="text-charcoal/40 leading-relaxed">
                         Your custom recipe will appear here once you hit generate.
+                      </p>
+                    </div>
+                  </div>
+                ) : isLoading ? (
+                  <div className="flex-grow flex flex-col items-center justify-center p-12 text-center space-y-6">
+                    <div className="w-20 h-20 bg-sage/10 rounded-full flex items-center justify-center text-sage animate-pulse">
+                      <Wand2 size={40} />
+                    </div>
+                    <div className="space-y-2 max-w-xs mx-auto">
+                      <h3 className="text-xl font-bold text-charcoal/80">Crafting your recipe...</h3>
+                      <p className="text-charcoal/40 leading-relaxed italic">
+                        "Good things come to those who wait."
                       </p>
                     </div>
                   </div>
