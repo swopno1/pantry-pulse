@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Sparkles, Wand2 } from 'lucide-react';
+import { Wand2 } from 'lucide-react';
 import Header from './components/Header';
 import SettingsModal from './components/SettingsModal';
 import IngredientInput from './components/IngredientInput';
 import RecipePreferences from './components/RecipePreferences';
+import RecipeViewer from './components/RecipeViewer';
 import { generateRecipePrompt } from './utils/promptBuilder';
 import { generateRecipeFromAI } from './utils/apiService';
 
@@ -119,39 +120,7 @@ function App() {
           {/* Right Column: Recipe Output Zone */}
           <section className="lg:sticky lg:top-28">
              <div className="bg-white rounded-3xl shadow-sm border border-charcoal/5 min-h-[500px] flex flex-col overflow-hidden transition-all">
-                {!generatedRecipe && !isLoading ? (
-                  <div className="flex-grow flex flex-col items-center justify-center p-12 text-center space-y-6">
-                    <div className="w-20 h-20 bg-cream rounded-full flex items-center justify-center text-charcoal/10">
-                      <Sparkles size={40} />
-                    </div>
-                    <div className="space-y-2 max-w-xs mx-auto">
-                      <h3 className="text-xl font-bold text-charcoal/80">Ready to Cook?</h3>
-                      <p className="text-charcoal/40 leading-relaxed">
-                        Your custom recipe will appear here once you hit generate.
-                      </p>
-                    </div>
-                  </div>
-                ) : isLoading ? (
-                  <div className="flex-grow flex flex-col items-center justify-center p-12 text-center space-y-6">
-                    <div className="w-20 h-20 bg-sage/10 rounded-full flex items-center justify-center text-sage animate-pulse">
-                      <Wand2 size={40} />
-                    </div>
-                    <div className="space-y-2 max-w-xs mx-auto">
-                      <h3 className="text-xl font-bold text-charcoal/80">Crafting your recipe...</h3>
-                      <p className="text-charcoal/40 leading-relaxed italic">
-                        "Good things come to those who wait."
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                   <div className="p-8 animate-in fade-in duration-700">
-                      <div className="prose prose-sage max-w-none">
-                        <pre className="whitespace-pre-wrap font-sans text-charcoal/80 leading-relaxed text-lg">
-                          {generatedRecipe}
-                        </pre>
-                      </div>
-                   </div>
-                )}
+                <RecipeViewer recipe={generatedRecipe} isLoading={isLoading} />
              </div>
           </section>
         </div>
