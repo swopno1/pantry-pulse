@@ -4,12 +4,17 @@ import { X, Eye, EyeOff, Trash2, ShieldCheck, Save } from 'lucide-react';
 const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
   const [openAIKey, setOpenAIKey] = useState(apiConfig.openaiKey);
   const [geminiKey, setGeminiKey] = useState(apiConfig.geminiKey);
+  const [activeProvider, setActiveProvider] = useState(apiConfig.activeProvider || 'openai');
   const [showOpenAI, setShowOpenAI] = useState(false);
   const [showGemini, setShowGemini] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleSave = () => {
-    onSave({ openaiKey: openAIKey, geminiKey: geminiKey });
+    onSave({
+      openaiKey: openAIKey,
+      geminiKey: geminiKey,
+      activeProvider: activeProvider
+    });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
   };
@@ -19,6 +24,7 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
       onClear();
       setOpenAIKey('');
       setGeminiKey('');
+      setActiveProvider('openai');
     }
   };
 
@@ -45,7 +51,38 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
+            {/* Active Provider Selection */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-charcoal/70 ml-1">Active AI Provider</label>
+              <div className="flex gap-2 p-1 bg-cream border border-charcoal/10 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setActiveProvider('openai')}
+                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
+                    activeProvider === 'openai'
+                      ? 'bg-white text-sage shadow-sm'
+                      : 'text-charcoal/40 hover:text-charcoal/60'
+                  }`}
+                >
+                  OpenAI
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveProvider('gemini')}
+                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
+                    activeProvider === 'gemini'
+                      ? 'bg-white text-sage shadow-sm'
+                      : 'text-charcoal/40 hover:text-charcoal/60'
+                  }`}
+                >
+                  Google Gemini
+                </button>
+              </div>
+            </div>
+
+            <div className="h-px bg-charcoal/5" />
+
             {/* OpenAI Key */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-charcoal/70 ml-1">OpenAI API Key</label>
