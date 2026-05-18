@@ -5,6 +5,7 @@ import SettingsModal from './components/SettingsModal';
 import IngredientInput from './components/IngredientInput';
 import RecipePreferences from './components/RecipePreferences';
 import RecipeViewer from './components/RecipeViewer';
+import ErrorBanner from './components/ErrorBanner';
 import { generateRecipePrompt } from './utils/promptBuilder';
 import { generateRecipeFromAI } from './utils/apiService';
 
@@ -26,14 +27,23 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [generatedRecipe, setGeneratedRecipe] = useState('');
+  const [error, setError] = useState(null);
 
   const hasApiKey = !!(apiConfig.openaiKey || apiConfig.geminiKey);
+
+  // Manual ingredient update wrapper to handle error clearing
+  const updateIngredients = (newIngredients) => {
+    setIngredients(newIngredients);
+    if (error) setError(null);
+  };
 
   const handleSaveSettings = (newConfig) => {
     localStorage.setItem('pantry_pulse_openai_key', newConfig.openaiKey);
     localStorage.setItem('pantry_pulse_gemini_key', newConfig.geminiKey);
     localStorage.setItem('pantry_pulse_active_provider', newConfig.activeProvider);
     setApiConfig(newConfig);
+    // If settings are saved, assume user tried to fix an error
+    setError(null);
   };
 
   const handleClearSettings = () => {
@@ -41,11 +51,37 @@ function App() {
     localStorage.removeItem('pantry_pulse_gemini_key');
     localStorage.removeItem('pantry_pulse_active_provider');
     setApiConfig({ openaiKey: '', geminiKey: '', activeProvider: 'openai' });
+    setError(null);
+  };
+
+  const handleOpenSettings = () => {
+    setIsSettingsOpen(true);
   };
 
   const handleGenerate = async () => {
+    // 1. Pre-flight Validation: Ingredients
+    if (ingredients.length === 0) {
+      setError("Please add at least one ingredient first!");
+      return;
+    }
+
+    // 2. Pre-flight Validation: API Key
+    const currentKey = apiConfig.activeProvider === 'openai' ? apiConfig.openaiKey : apiConfig.geminiKey;
+    if (!currentKey) {
+      setError("An API key is required to generate recipes.");
+      setIsSettingsOpen(true);
+      return;
+    }
+
+    // 3. Network Check
+    if (!window.navigator.onLine) {
+      setError("Network error. Please check your internet connection.");
+      return;
+    }
+
     setIsLoading(true);
     setGeneratedRecipe('');
+    setError(null);
 
     try {
       // Build the prompt
@@ -55,9 +91,15 @@ function App() {
       const recipe = await generateRecipeFromAI(apiConfig, prompt);
 
       setGeneratedRecipe(recipe);
-    } catch (error) {
-      console.error('Error generating recipe:', error);
-      alert(error.message || 'Something went wrong while generating the recipe. Please try again.');
+    } catch (err) {
+      console.error('Error generating recipe:', err);
+
+      // Categorize errors
+      if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
+        setError("Network error. Please check your internet connection.");
+      } else {
+        setError(err.message || 'Something went wrong while generating the recipe. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -66,7 +108,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col bg-cream/30">
       <Header
-        onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenSettings={handleOpenSettings}
         hasApiKey={hasApiKey}
       />
 
@@ -87,7 +129,7 @@ function App() {
             <div className="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-charcoal/5">
               <div className="space-y-3">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-charcoal/40 ml-1">Ingredients</h3>
-                <IngredientInput ingredients={ingredients} setIngredients={setIngredients} />
+                <IngredientInput ingredients={ingredients} setIngredients={updateIngredients} />
               </div>
 
               <div className="space-y-3">
@@ -95,18 +137,21 @@ function App() {
                 <RecipePreferences preferences={preferences} onPreferenceChange={setPreferences} />
               </div>
 
-              <div className="pt-4">
+              <div className="pt-4 space-y-4">
+                {/* Error Banner Placement */}
+                <ErrorBanner message={error} onClose={() => setError(null)} />
+
                 <div className="relative group">
                   <button
                     onClick={handleGenerate}
-                    disabled={ingredients.length === 0 || !hasApiKey || isLoading}
+                    disabled={isLoading}
                     className="w-full bg-sage hover:bg-sage/90 disabled:bg-charcoal/10 disabled:text-charcoal/30 text-white py-4 px-8 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-sage/20 flex items-center justify-center gap-3 group/btn cursor-pointer disabled:cursor-not-allowed"
                   >
                     < Wand2 size={24} className="group-hover/btn:rotate-12 transition-transform" />
                     {isLoading ? 'Crafting Recipe...' : 'Generate Recipe'}
                   </button>
 
-                  {(ingredients.length === 0 || !hasApiKey) && !isLoading && (
+                  {(ingredients.length === 0 || !hasApiKey) && !isLoading && !error && (
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-charcoal text-white text-xs py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-10">
                       {ingredients.length === 0 ? 'Add at least one ingredient' : 'Set your API key in Settings'}
                       <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-charcoal rotate-45" />
@@ -140,6 +185,7 @@ function App() {
           onSave={handleSaveSettings}
           onClear={handleClearSettings}
           onClose={() => setIsSettingsOpen(false)}
+          error={error}
         />
       )}
     </div>

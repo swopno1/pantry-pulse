@@ -33,13 +33,13 @@ async function fetchOpenAIRecipe(apiKey, prompt) {
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
     if (response.status === 401) {
-      throw new Error('Invalid OpenAI API Key. Please check your settings.');
+      throw new Error('Invalid API Key. Please double-check your key in Settings.');
     }
     if (response.status === 429) {
-      throw new Error('OpenAI rate limit reached. Please try again later.');
+      throw new Error('Rate limit exceeded or insufficient credits. Please check your AI provider billing status.');
     }
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.error?.message || 'Failed to fetch from OpenAI');
   }
 
@@ -74,13 +74,13 @@ async function fetchGeminiRecipe(apiKey, prompt) {
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
     if (response.status === 401 || response.status === 403) {
-      throw new Error('Invalid Gemini API Key. Please check your settings.');
+      throw new Error('Invalid API Key. Please double-check your key in Settings.');
     }
     if (response.status === 429) {
-      throw new Error('Gemini rate limit reached. Please try again later.');
+      throw new Error('Rate limit exceeded or insufficient credits. Please check your AI provider billing status.');
     }
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.error?.message || 'Failed to fetch from Google Gemini');
   }
 
@@ -95,10 +95,10 @@ export async function generateRecipeFromAI(apiConfig, prompt) {
   const { activeProvider, openaiKey, geminiKey } = apiConfig;
 
   if (activeProvider === 'openai') {
-    if (!openaiKey) throw new Error('OpenAI API Key is missing.');
+    if (!openaiKey) throw new Error('An API key is required to generate recipes.');
     return await fetchOpenAIRecipe(openaiKey, prompt);
   } else if (activeProvider === 'gemini') {
-    if (!geminiKey) throw new Error('Gemini API Key is missing.');
+    if (!geminiKey) throw new Error('An API key is required to generate recipes.');
     return await fetchGeminiRecipe(geminiKey, prompt);
   } else {
     throw new Error('Invalid AI provider selected.');
