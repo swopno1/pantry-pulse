@@ -1,13 +1,20 @@
-import { useState } from 'react';
-import { X, Eye, EyeOff, Trash2, ShieldCheck, Save } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Eye, EyeOff, Trash2, ShieldCheck, Save, AlertCircle } from 'lucide-react';
 
-const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
+const SettingsModal = ({ apiConfig, onSave, onClear, onClose, error }) => {
   const [openAIKey, setOpenAIKey] = useState(apiConfig.openaiKey);
   const [geminiKey, setGeminiKey] = useState(apiConfig.geminiKey);
   const [activeProvider, setActiveProvider] = useState(apiConfig.activeProvider || 'openai');
   const [showOpenAI, setShowOpenAI] = useState(false);
   const [showGemini, setShowGemini] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (isSaved) {
+      const timer = setTimeout(() => setIsSaved(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSaved]);
 
   const handleSave = () => {
     onSave({
@@ -16,7 +23,6 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
       activeProvider: activeProvider
     });
     setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
   };
 
   const handleClear = () => {
@@ -27,6 +33,10 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
       setActiveProvider('openai');
     }
   };
+
+  const hasError = !!error;
+  const isCurrentlyActiveProviderOpenAI = activeProvider === 'openai';
+  const isCurrentlyActiveProviderGemini = activeProvider === 'gemini';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/40 backdrop-blur-sm">
@@ -42,7 +52,16 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+          {error && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2 animate-pulse">
+              <AlertCircle className="text-amber-600 shrink-0 mt-0.5" size={18} />
+              <p className="text-amber-800 text-xs font-medium leading-relaxed">
+                {error}
+              </p>
+            </div>
+          )}
+
           <div className="bg-sage/10 rounded-xl p-4 flex gap-3 items-start">
             <ShieldCheck className="text-sage shrink-0" size={20} />
             <p className="text-sm text-charcoal/80 leading-relaxed">
@@ -92,7 +111,11 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
                   value={openAIKey}
                   onChange={(e) => setOpenAIKey(e.target.value)}
                   placeholder="sk-..."
-                  className="w-full px-4 py-3 bg-cream border border-charcoal/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage/20 focus:border-sage transition-all pr-12 font-mono text-sm"
+                  className={`w-full px-4 py-3 bg-cream border rounded-lg focus:outline-none focus:ring-2 transition-all pr-12 font-mono text-sm ${
+                    hasError && isCurrentlyActiveProviderOpenAI
+                      ? 'border-amber-500 ring-2 ring-amber-500/20'
+                      : 'border-charcoal/10 focus:ring-sage/20 focus:border-sage'
+                  }`}
                 />
                 <button
                   type="button"
@@ -113,7 +136,11 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
                   value={geminiKey}
                   onChange={(e) => setGeminiKey(e.target.value)}
                   placeholder="AIza..."
-                  className="w-full px-4 py-3 bg-cream border border-charcoal/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage/20 focus:border-sage transition-all pr-12 font-mono text-sm"
+                  className={`w-full px-4 py-3 bg-cream border rounded-lg focus:outline-none focus:ring-2 transition-all pr-12 font-mono text-sm ${
+                    hasError && isCurrentlyActiveProviderGemini
+                      ? 'border-amber-500 ring-2 ring-amber-500/20'
+                      : 'border-charcoal/10 focus:ring-sage/20 focus:border-sage'
+                  }`}
                 />
                 <button
                   type="button"
