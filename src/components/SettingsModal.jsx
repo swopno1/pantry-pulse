@@ -35,7 +35,7 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
           <h2 className="text-2xl font-serif text-charcoal">Settings</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-charcoal/5 rounded-full transition-colors text-charcoal/50 hover:text-charcoal"
+            className="p-2 hover:bg-charcoal/5 rounded-full transition-all duration-300 text-charcoal/50 hover:text-charcoal hover:scale-110 active:scale-95 cursor-pointer"
             aria-label="Close"
           >
             <X size={24} />
@@ -59,7 +59,7 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
                 <button
                   type="button"
                   onClick={() => setActiveProvider('openai')}
-                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${
                     activeProvider === 'openai'
                       ? 'bg-white text-sage shadow-sm'
                       : 'text-charcoal/40 hover:text-charcoal/60'
@@ -70,7 +70,7 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
                 <button
                   type="button"
                   onClick={() => setActiveProvider('gemini')}
-                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
+                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 ${
                     activeProvider === 'gemini'
                       ? 'bg-white text-sage shadow-sm'
                       : 'text-charcoal/40 hover:text-charcoal/60'
@@ -129,13 +129,13 @@ const SettingsModal = ({ apiConfig, onSave, onClear, onClose }) => {
           <div className="flex flex-col gap-3 pt-2">
             <button
               onClick={handleSave}
-              className="w-full bg-sage hover:bg-sage/90 text-white py-3 rounded-lg font-semibold transition-all shadow-md flex items-center justify-center gap-2"
+              className="w-full bg-sage hover:bg-sage/90 text-white py-3 rounded-lg font-semibold transition-all duration-300 shadow-md flex items-center justify-center gap-2 hover:-translate-y-0.5 active:scale-95 cursor-pointer"
             >
               {isSaved ? 'Saved!' : <><Save size={18} /> Save Settings</>}
             </button>
             <button
               onClick={handleClear}
-              className="w-full bg-white border border-amber/20 hover:border-amber text-amber py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+              className="w-full bg-white border border-amber/20 hover:border-amber text-amber py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-0.5 active:scale-95 cursor-pointer"
             >
               <Trash2 size={18} /> Clear Keys
             </button>

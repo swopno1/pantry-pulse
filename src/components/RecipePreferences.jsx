@@ -38,7 +38,7 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
               key={cuisine}
               onClick={() => handleCuisineChange(cuisine)}
               aria-pressed={preferences.cuisine === cuisine}
-              className={`px-4 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
+              className={`px-4 py-2.5 rounded-xl border-2 transition-all duration-300 text-sm font-medium hover:-translate-y-0.5 active:scale-95 cursor-pointer ${
                 preferences.cuisine === cuisine
                   ? 'bg-amber border-amber text-white shadow-md shadow-amber/20'
                   : 'bg-white border-charcoal/5 text-charcoal/60 hover:border-amber/30 hover:text-charcoal'
@@ -59,7 +59,7 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
               key={style}
               onClick={() => handleStyleChange(style)}
               aria-pressed={preferences.style === style}
-              className={`px-4 py-2.5 rounded-xl border-2 transition-all text-sm font-medium ${
+              className={`px-4 py-2.5 rounded-xl border-2 transition-all duration-300 text-sm font-medium hover:-translate-y-0.5 active:scale-95 cursor-pointer ${
                 preferences.style === style
                   ? 'bg-amber border-amber text-white shadow-md shadow-amber/20'
                   : 'bg-white border-charcoal/5 text-charcoal/60 hover:border-amber/30 hover:text-charcoal'
@@ -82,7 +82,7 @@ const RecipePreferences = ({ preferences, onPreferenceChange }) => {
               key={level}
               onClick={() => handleSpiceChange(level)}
               aria-pressed={preferences.spice === level}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all font-medium ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 transition-all duration-300 font-medium hover:-translate-y-0.5 active:scale-95 cursor-pointer ${
                 preferences.spice === level
                   ? 'bg-amber border-amber text-white shadow-md shadow-amber/20'
                   : 'bg-white border-charcoal/5 text-charcoal/60 hover:border-amber/30 hover:text-charcoal'

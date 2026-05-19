@@ -1,11 +1,32 @@
-import { useMemo } from 'react';
-import { Sparkles, Wand2 } from 'lucide-react';
+import { useMemo, useState, useEffect } from 'react';
+import { Sparkles, ChefHat, Timer } from 'lucide-react';
 
 /**
  * RecipeViewer Component
  * Parses and displays AI-generated Markdown recipes with custom styling.
  */
 const RecipeViewer = ({ recipe, isLoading }) => {
+  const [messageIndex, setMessageIndex] = useState(0);
+  const loadingMessages = useMemo(() => [
+    "Gathering ingredients...",
+    "Consulting the master chef...",
+    "Baking your custom menu...",
+    "Adding a pinch of magic...",
+    "Plating with care..."
+  ], []);
+
+  useEffect(() => {
+    let interval;
+    if (isLoading) {
+      interval = setInterval(() => {
+        setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+      }, 1500);
+    }
+    return () => {
+      clearInterval(interval);
+      setMessageIndex(0);
+    };
+  }, [isLoading, loadingMessages.length]);
 
   const parsedContent = useMemo(() => {
     if (!recipe) return null;
@@ -106,15 +127,37 @@ const RecipeViewer = ({ recipe, isLoading }) => {
 
   if (isLoading) {
     return (
-      <div className="flex-grow flex flex-col items-center justify-center p-12 text-center space-y-6 min-h-[500px]">
-        <div className="w-20 h-20 bg-sage/10 rounded-full flex items-center justify-center text-sage animate-pulse">
-          <Wand2 size={40} />
+      <div className="flex-grow flex flex-col p-8 md:p-12 space-y-8 animate-pulse-soft">
+        <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
+          <div className="relative">
+             <div className="w-24 h-24 bg-sage/10 rounded-full flex items-center justify-center text-sage animate-cooking-spin">
+               <ChefHat size={48} />
+             </div>
+             <div className="absolute -bottom-2 -right-2 bg-white p-2 rounded-full shadow-sm text-amber">
+               <Timer size={20} className="animate-pulse" />
+             </div>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-serif text-charcoal transition-all duration-500">
+              {loadingMessages[messageIndex]}
+            </h3>
+            <p className="text-charcoal/40 italic">Master Chef is at work...</p>
+          </div>
         </div>
-        <div className="space-y-2 max-w-xs mx-auto">
-          <h3 className="text-xl font-bold text-charcoal/80">Crafting your recipe...</h3>
-          <p className="text-charcoal/40 leading-relaxed italic">
-            "Good things come to those who wait."
-          </p>
+
+        {/* Skeleton UI */}
+        <div className="space-y-6">
+          <div className="h-10 bg-charcoal/5 rounded-lg w-3/4" />
+          <div className="space-y-3">
+            <div className="h-4 bg-charcoal/5 rounded w-full" />
+            <div className="h-4 bg-charcoal/5 rounded w-full" />
+            <div className="h-4 bg-charcoal/5 rounded w-5/6" />
+          </div>
+          <div className="pt-8 space-y-4">
+            <div className="h-8 bg-charcoal/5 rounded-lg w-1/4" />
+            <div className="h-4 bg-charcoal/5 rounded w-full" />
+            <div className="h-4 bg-charcoal/5 rounded w-full" />
+          </div>
         </div>
       </div>
     );

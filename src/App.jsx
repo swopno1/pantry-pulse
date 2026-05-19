@@ -100,9 +100,9 @@ function App() {
                   <button
                     onClick={handleGenerate}
                     disabled={ingredients.length === 0 || !hasApiKey || isLoading}
-                    className="w-full bg-sage hover:bg-sage/90 disabled:bg-charcoal/10 disabled:text-charcoal/30 text-white py-4 px-8 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-sage/20 flex items-center justify-center gap-3 group/btn cursor-pointer disabled:cursor-not-allowed"
+                    className="w-full bg-sage hover:bg-sage/90 brightness-100 hover:brightness-95 disabled:bg-charcoal/10 disabled:text-charcoal/30 text-white py-4 px-8 rounded-2xl font-bold text-xl transition-all duration-300 shadow-lg shadow-sage/20 flex items-center justify-center gap-3 group/btn cursor-pointer disabled:cursor-not-allowed hover:-translate-y-0.5 active:scale-[0.98]"
                   >
-                    < Wand2 size={24} className="group-hover/btn:rotate-12 transition-transform" />
+                    <Wand2 size={24} className="group-hover/btn:rotate-12 transition-transform" />
                     {isLoading ? 'Crafting Recipe...' : 'Generate Recipe'}
                   </button>
 
