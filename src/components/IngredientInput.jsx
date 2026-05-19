@@ -36,18 +36,18 @@ const IngredientInput = ({ ingredients, setIngredients }) => {
         />
         <button
           onClick={() => addIngredient(inputValue)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-sage text-white rounded-lg hover:bg-sage/90 transition-colors shadow-sm"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-sage text-white rounded-lg hover:bg-sage/90 active:scale-95 hover:-translate-y-0.5 transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer"
           aria-label="Add ingredient"
         >
           <Plus size={20} />
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-2 min-h-[40px]">
+      <div className="flex flex-wrap gap-2 min-h-[40px] transition-all duration-500">
         {ingredients.map((ingredient, index) => (
           <div
             key={`${ingredient}-${index}`}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-sage/10 text-sage border border-sage/20 rounded-full animate-in fade-in zoom-in duration-200"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-sage/10 text-sage border border-sage/20 rounded-full animate-in fade-in zoom-in duration-300 exit-out fade-out zoom-out"
           >
             <span className="text-sm font-medium capitalize">{ingredient}</span>
             <button
