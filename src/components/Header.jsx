@@ -2,7 +2,7 @@ import { ChefHat, Settings as SettingsIcon } from 'lucide-react';
 
 const Header = ({ onOpenSettings, hasApiKey }) => {
   return (
-    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-charcoal/5 px-4 py-3">
+    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-charcoal/5 px-4 py-3 print:hidden">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2.5">
           <div className="bg-sage p-1.5 rounded-lg text-white shadow-sm">

@@ -31,3 +31,14 @@
     @apply font-serif font-bold;
   }
 }
+
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  @page {
+    margin: 2cm;
+  }
+}
