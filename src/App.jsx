@@ -64,17 +64,17 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream/30">
+    <div className="min-h-screen flex flex-col bg-cream/30 print:bg-white print:min-h-0">
       <Header
         onOpenSettings={() => setIsSettingsOpen(true)}
         hasApiKey={hasApiKey}
       />
 
-      <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-8 md:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <main className="flex-grow max-w-7xl mx-auto w-full px-4 py-8 md:py-12 print:py-0 print:px-0 print:max-w-none">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start print:block">
 
           {/* Left Column: Input Control Zone */}
-          <section className="space-y-10">
+          <section className="space-y-10 print:hidden">
             <div className="space-y-4">
               <h2 className="text-3xl md:text-4xl text-charcoal leading-tight">
                 What's in your <span className="text-sage font-serif italic">pantry?</span>
@@ -118,15 +118,15 @@ function App() {
           </section>
 
           {/* Right Column: Recipe Output Zone */}
-          <section className="lg:sticky lg:top-28">
-             <div className="bg-white rounded-3xl shadow-sm border border-charcoal/5 min-h-[500px] flex flex-col overflow-hidden transition-all">
+          <section className="lg:sticky lg:top-28 print:static print:w-full">
+             <div className="bg-white rounded-3xl shadow-sm border border-charcoal/5 min-h-[500px] flex flex-col overflow-hidden transition-all print:shadow-none print:border-none print:min-h-0">
                 <RecipeViewer recipe={generatedRecipe} isLoading={isLoading} />
              </div>
           </section>
         </div>
       </main>
 
-      <footer className="py-8 border-t border-charcoal/5 bg-white">
+      <footer className="py-8 border-t border-charcoal/5 bg-white print:hidden">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-charcoal/40 text-sm">
             &copy; {new Date().getFullYear()} PantryPulse. Your ingredients, your privacy, your AI.

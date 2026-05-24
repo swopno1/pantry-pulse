@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { Sparkles, ChefHat, Timer } from 'lucide-react';
+import { Sparkles, ChefHat, Timer, Copy, Check, Printer } from 'lucide-react';
 
 /**
  * RecipeViewer Component
@@ -125,6 +125,22 @@ const RecipeViewer = ({ recipe, isLoading }) => {
     return result;
   }, [recipe]);
 
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(recipe);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (isLoading) {
     return (
       <div className="flex-grow flex flex-col p-8 md:p-12 space-y-8 animate-pulse-soft">
@@ -181,6 +197,34 @@ const RecipeViewer = ({ recipe, isLoading }) => {
 
   return (
     <div className="p-8 md:p-12 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
+      {/* Utility Bar */}
+      <div className="flex items-center gap-4 mb-8 pb-6 border-b border-charcoal/5 print:hidden">
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-2 text-sm font-medium text-charcoal/60 hover:text-sage transition-colors cursor-pointer"
+        >
+          {isCopied ? (
+            <>
+              <Check size={18} className="text-emerald-500" />
+              <span className="text-emerald-500 font-bold">Copied!</span>
+            </>
+          ) : (
+            <>
+              <Copy size={18} />
+              <span>Copy to Clipboard</span>
+            </>
+          )}
+        </button>
+        <div className="w-px h-4 bg-charcoal/10" />
+        <button
+          onClick={handlePrint}
+          className="flex items-center gap-2 text-sm font-medium text-charcoal/60 hover:text-sage transition-colors cursor-pointer"
+        >
+          <Printer size={18} />
+          <span>Print Recipe</span>
+        </button>
+      </div>
+
       <div className="max-w-none">
         {parsedContent}
       </div>
