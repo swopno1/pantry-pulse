@@ -5,6 +5,7 @@ import SettingsModal from './components/SettingsModal';
 import IngredientInput from './components/IngredientInput';
 import RecipePreferences from './components/RecipePreferences';
 import RecipeViewer from './components/RecipeViewer';
+import EducationalZone from './components/EducationalZone';
 import { generateRecipePrompt } from './utils/promptBuilder';
 import { generateRecipeFromAI } from './utils/apiService';
 
@@ -125,6 +126,8 @@ function App() {
           </section>
         </div>
       </main>
+
+      <EducationalZone />
 
       <footer className="py-8 border-t border-charcoal/5 bg-white print:hidden">
         <div className="max-w-7xl mx-auto px-4 text-center">
